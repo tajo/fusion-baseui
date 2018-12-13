@@ -12,8 +12,13 @@ import {
 } from "baseui/header-navigation";
 import { StatefulInput } from "baseui/input";
 import { Accordion, Panel } from "baseui/accordion";
-import { prepared } from "fusion-react";
 import { format } from "date-fns";
+
+// fetching stuff
+import { withRPCRedux } from "fusion-plugin-rpc-redux-react";
+import { prepared } from "fusion-react";
+import { connect } from "react-redux";
+import { compose } from "redux";
 
 const Icon = styled("div", {
   display: "flex",
@@ -31,16 +36,12 @@ const SearchComponent = () => (
 
 class Home extends React.Component {
   state = {
-    concerts: [],
     search: ""
   };
   componentDidMount() {
-    fetch("/api/concerts")
-      .then(response => response.json())
-      .then(result => this.setState({ concerts: result.results }));
+    this.props.getConcerts();
   }
   render() {
-    const { concerts, search } = this.state;
     return (
       <React.Fragment>
         <HeaderNavigation>
@@ -57,9 +58,11 @@ class Home extends React.Component {
           gridGap="scale1000"
           margin="scale1000"
         >
-          {concerts
+          {this.props.concerts.data
             .filter(concert =>
-              concert.name.toLowerCase().includes(search.toLowerCase())
+              concert.name
+                .toLowerCase()
+                .includes(this.state.search.toLowerCase())
             )
             .map(concert => (
               <Card
@@ -81,15 +84,15 @@ class Home extends React.Component {
   }
 }
 
-// import React from "react";
-// import { prepared } from "fusion-react";
-// const Concerts = props => {
-//   console.log(props);
-//   return null;
-// };
-// export default prepared(() => fetch("https://apis.is/concerts"))(Concerts);
+const hoc = compose(
+  withRPCRedux("getConcerts"), // generates Redux actions and a React prop for the `getConcerts` RPC call
+  connect(({ concerts }) => ({ concerts })), // expose the Redux state to React props
+  prepared(props => {
+    if (props.concerts.loading || props.concerts.data.length) {
+      return;
+    }
+    return props.getConcerts();
+  }) // invokes the passed in method on component hydration
+);
 
-// export default prepared(() => fetch("https://localhost:3000/api/user/1"))(
-//   Concert
-//);
-export default Home;
+export default hoc(Home);

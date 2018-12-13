@@ -1,5 +1,5 @@
 {
-  "name": "example-fusion-app",
+  "name": "fusion-baseui-app",
   "version": "0.0.0",
   "main": "index.js",
   "dependencies": {
@@ -19,10 +19,9 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-redux": "^6.0.0",
+    "react-redux": "^5.1.1",
     "redux": "^4.0.1",
-    "styletron-react": "^4.3.5",
-    "unfetch": "^4.0.1"
+    "styletron-react": "^4.3.5"
   },
   "scripts": {
     "dev": "fusion dev",
