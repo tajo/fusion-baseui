@@ -1,4 +1,4 @@
-# Fusion.js application
+# Fusion.js meets Base UI
 
 Welcome to your Fusion.js application. Get started by running the application with `yarn dev` in a terminal.
 

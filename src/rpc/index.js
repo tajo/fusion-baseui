@@ -5,11 +5,13 @@ export default {
   getConcerts: async () => {
     try {
       const response = await fetch("https://apis.is/concerts");
-      // Error: Network
+
+      // TEST Error: Network
       // const response = await fetch("http://exampleofnetworkerror.com");
 
-      // Error: Status code is not 200
+      // TEST Error: Status code is not 200
       //const response = await fetch("http://httpstat.us/500");
+
       if (response.status == 200) {
         const json = await response.json();
         return json.results;

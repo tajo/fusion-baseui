@@ -1,39 +1,23 @@
 // @flow
 import * as React from "react";
-import { styled } from "fusion-plugin-styletron-react";
+import { format } from "date-fns";
+
+// Base UI components
 import { Card } from "baseui/card";
 import { Block } from "baseui/block";
-import Search from "baseui/icon/search";
-import {
-  HeaderNavigation,
-  StyledNavigationItem as NavigationItem,
-  StyledNavigationList as NavigationList
-} from "baseui/header-navigation";
+import { HeaderNavigation } from "baseui/header-navigation";
 import { StatefulInput } from "baseui/input";
-import { Accordion, Panel } from "baseui/accordion";
 import { Notification, KIND } from "baseui/notification";
-import { format } from "date-fns";
-import type { ConcertT } from "../redux/concerts";
+import Search from "./search";
 
-// fetching stuff
-import { withRPCRedux } from "fusion-plugin-rpc-redux-react";
-import { prepared } from "fusion-react";
-import { connect } from "react-redux";
+// redux and fusion helpers
 import { compose } from "redux";
+import { connect } from "react-redux";
+import { prepared } from "fusion-react";
+import { withRPCRedux } from "fusion-plugin-rpc-redux-react";
 
-const Icon = styled("div", {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  height: "100%",
-  marginRight: "1em"
-});
-
-const SearchComponent = () => (
-  <Icon>
-    <Search size="scale800" color="#aaa" />
-  </Icon>
-);
+// types
+import type { ConcertT } from "../redux/concerts";
 
 class Home extends React.Component<
   {
@@ -62,7 +46,7 @@ class Home extends React.Component<
       <React.Fragment>
         <HeaderNavigation>
           <StatefulInput
-            overrides={{ After: SearchComponent }}
+            overrides={{ After: Search }}
             placeholder="Concerts in Iceland"
             onChange={e => this.setState({ search: e.target.value })}
           />
@@ -104,14 +88,18 @@ class Home extends React.Component<
 }
 
 const hoc = compose(
-  withRPCRedux("getConcerts"), // generates Redux actions and a React prop for the `getConcerts` RPC call
-  connect(({ concerts }) => ({ concerts })), // expose the Redux state to React props
+  // generates Redux actions and
+  // a React prop for the `getConcerts` RPC call
+  withRPCRedux("getConcerts"),
+  // expose the Redux state to React props
+  connect(({ concerts }) => ({ concerts })),
+  // invokes the passed in method on component hydration
   prepared(props => {
     if (props.concerts.loading || props.concerts.data.length) {
       return Promise.resolve();
     }
     return props.getConcerts();
-  }) // invokes the passed in method on component hydration
+  })
 );
 
 export default hoc(Home);
