@@ -1,7 +1,6 @@
 // @flow
 import * as React from "react";
 import { styled } from "fusion-plugin-styletron-react";
-import { Button, KIND } from "baseui/button";
 import { Card } from "baseui/card";
 import { Block } from "baseui/block";
 import Search from "baseui/icon/search";
@@ -12,7 +11,9 @@ import {
 } from "baseui/header-navigation";
 import { StatefulInput } from "baseui/input";
 import { Accordion, Panel } from "baseui/accordion";
+import { Notification, KIND } from "baseui/notification";
 import { format } from "date-fns";
+import type { ConcertT } from "../redux/concerts";
 
 // fetching stuff
 import { withRPCRedux } from "fusion-plugin-rpc-redux-react";
@@ -34,14 +35,29 @@ const SearchComponent = () => (
   </Icon>
 );
 
-class Home extends React.Component {
+class Home extends React.Component<
+  {
+    getConcerts: () => void,
+    concerts: { data: ConcertT[], error: ?string }
+  },
+  { search: string }
+> {
   state = {
     search: ""
   };
   componentDidMount() {
+    // optional re-fetch on the client
     this.props.getConcerts();
   }
   render() {
+    const { concerts } = this.props;
+    if (concerts.error) {
+      return (
+        <Block display="flex" justifyContent="center">
+          <Notification kind={KIND.negative}>{concerts.error}</Notification>
+        </Block>
+      );
+    }
     return (
       <React.Fragment>
         <HeaderNavigation>
@@ -58,26 +74,29 @@ class Home extends React.Component {
           gridGap="scale1000"
           margin="scale1000"
         >
-          {this.props.concerts.data
-            .filter(concert =>
-              concert.name
-                .toLowerCase()
-                .includes(this.state.search.toLowerCase())
-            )
-            .map(concert => (
-              <Card
-                headerImage={concert.imageSource}
-                title={concert.name}
-                key={concert.eventDateName + concert.dateOfShow}
-                overrides={{
-                  Root: { style: { maxWidth: "280px", justifySelf: "center" } }
-                }}
-              >
-                📅 {format(concert.dateOfShow, "MM/DD/YYYY hh:mm A")}
-                <br />
-                📍 {concert.eventHallName}
-              </Card>
-            ))}
+          {concerts.data &&
+            concerts.data
+              .filter(concert =>
+                concert.name
+                  .toLowerCase()
+                  .includes(this.state.search.toLowerCase())
+              )
+              .map(concert => (
+                <Card
+                  headerImage={concert.imageSource}
+                  title={concert.name}
+                  key={concert.eventDateName + concert.dateOfShow}
+                  overrides={{
+                    Root: {
+                      style: { maxWidth: "280px", justifySelf: "center" }
+                    }
+                  }}
+                >
+                  📅 {format(concert.dateOfShow, "MM/DD/YYYY hh:mm A")}
+                  <br />
+                  📍 {concert.eventHallName}
+                </Card>
+              ))}
         </Block>
       </React.Fragment>
     );
@@ -89,7 +108,7 @@ const hoc = compose(
   connect(({ concerts }) => ({ concerts })), // expose the Redux state to React props
   prepared(props => {
     if (props.concerts.loading || props.concerts.data.length) {
-      return;
+      return Promise.resolve();
     }
     return props.getConcerts();
   }) // invokes the passed in method on component hydration

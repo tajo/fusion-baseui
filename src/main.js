@@ -10,8 +10,6 @@ import RPC, { RPCToken, RPCHandlersToken } from "fusion-plugin-rpc-redux-react";
 import { FetchToken } from "fusion-tokens";
 import reducer from "./redux/index.js";
 import handlers from "./rpc/index.js";
-import ProxyPlugin from "./proxyPlugin";
-
 import fetch from "isomorphic-fetch";
 
 import root from "./root.js";
@@ -20,8 +18,6 @@ export default () => {
   const app = new App(root);
   app.register(Styletron);
   app.register(Router);
-  app.register(ProxyPlugin);
-
   app.register(RPCToken, RPC);
   app.register(UniversalEventsToken, UniversalEvents);
   __NODE__
