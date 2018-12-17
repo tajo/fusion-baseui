@@ -1,16 +1,25 @@
 # Fusion.js + Base UI Example App
 
-Get started by running the application with `yarn` and `yarn dev` in a terminal.
-
 ## What are we going to build?
 
 ![Concerts in Iceland](preview.png)
+
+If you want to immediately get the whole application
+
+```
+git clone git@github.com:tajo/fusion-baseui.git
+cd fusion-baseui
+yarn
+yarn dev
+```
+
+Or you can follow the tutorial bellow with detailed description.
 
 # Step-by-step tutorial
 
 ## Assumptions
 
-- You environment has Node.js 8.11 and the latest Yarn
+- Your environment has Node.js 8.11 and the latest Yarn
 - Advanced knowledge of JavaScript
 - Intermediate knowledge of React and Redux
 
@@ -262,9 +271,7 @@ yarn add fusion-plugin-react-redux fusion-plugin-rpc-redux-react fusion-plugin-u
 
 `fusion-plugin-react-redux` adds basic integration of React-Redux into your Fusion.js application. It handles creating your store, wrapping your element tree in a provider, and serializing/deserializing your store between server and client.
 
-`fusion-plugin-rpc-redux-react` RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. It's an alternative to REST.
-
-This plugin provides a higher order component that connects RPC methods to Redux as well as React component props. It also helps to cut the typical redux boilerplate when creating action creators and reducers.
+`fusion-plugin-rpc-redux-react` RPC is a natural way of expressing that a server-side function should be run in response to a client-side function call. It's an alternative to REST. This plugin provides a higher order component that connects RPC methods to Redux as well as React component props. It also helps to cut the typical redux boilerplate when creating action creators and reducers.
 
 But first things first, let's create a reducer in `src/redux/concerts.js`
 
@@ -370,7 +377,7 @@ export default () => {
 };
 ```
 
-At this point, you should see a blank page in the browser because we still need to connect our component to the redux and declare the dependency on `getConcerts`.
+Finally, **let's remove the hardcoded concerts** and connect the home component to the redux (`getConcerts` store).
 
 Add these imports into `src/pages/home.js`
 
@@ -420,7 +427,7 @@ class Home extends React.Component<
 }
 ```
 
-And finally, replace `CONCERTS` with `this.props.concerts.data`. Now you should see the list of events again 🎉🎉🎉.
+And finally, replace `CONCERTS` with `this.props.concerts.data`. Now you should see the list of events again 🎉🎉🎉. However, this time our application fetches them from the public API!
 
 Note the client doesn't **NOT** make an XHR call to `https://apis.is/concerts` - it's all done on the server and browser already receives all events (rendered HTML elements and also as serialized redux state). **That's it!**
 
