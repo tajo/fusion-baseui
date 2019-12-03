@@ -1,6 +1,6 @@
 // @flow
 import * as React from "react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 // Base UI components
 import { Card } from "baseui/card";
@@ -18,6 +18,10 @@ import { withRPCRedux } from "fusion-plugin-rpc-redux-react";
 
 // types
 import type { ConcertT } from "../redux/concerts";
+
+const formatDate = (dateOfShow: string) => {
+  return format(parseISO(dateOfShow), "mm/dd/yyyy hh:mm")
+}
 
 class Home extends React.Component<
   {
@@ -76,7 +80,7 @@ class Home extends React.Component<
                     }
                   }}
                 >
-                  📅 {format(concert.dateOfShow, "MM/DD/YYYY hh:mm A")}
+                  📅 {formatDate(concert.dateOfShow)}
                   <br />
                   📍 {concert.eventHallName}
                 </Card>
