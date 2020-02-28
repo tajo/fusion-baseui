@@ -40,7 +40,7 @@ cd fusion-baseui
 yarn dev
 ```
 
-That should open [https://localhost:30](https://localhost:300)00 in your browser with "Fusion.js - Let's get started" message.
+That should open [https://localhost:3000](https://localhost:3000) in your browser with "Fusion.js - Let's get started" message.
 
 Open `src/pages/home.js`, change the `Get Started` message to something else and save it. You should immediately see it in the browser because of hot reloading.
 
